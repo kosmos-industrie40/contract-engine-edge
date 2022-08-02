@@ -1,0 +1,41 @@
+name: Build
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.17"
+          check-latest: true
+
+      - name: Run build
+        run: |
+          make build
+
+  container_build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Build an App Image
+        run: |
+          docker run \
+            -v $(pwd):/$GITHUB_WORKSPACE \
+            gcr.io/kaniko-project/executor:latest \
+              --no-push \
+              --context $GITHUB_WORKSPACE \
+              --dockerfile $GITHUB_WORKSPACE/Dockerfile \
+              --destination $GITHUB_WORKSPACE/contract-engine-edge:latest
