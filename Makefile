@@ -21,4 +21,4 @@ race:
 	go test -short -race ./...
 
 docker:
-	docker build -t contractEngineEdge -f Dockerfile .
+	docker build -t contract_engine_edge -f Dockerfile .
